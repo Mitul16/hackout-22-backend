@@ -9,6 +9,14 @@ const taskSchema = mongoose.Schema({
     type: String,
     required: [true, "Provide description"],
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  projectId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Project",
+  },
   skills: {
     type: [mongoose.Schema.Types.ObjectId],
   },
