@@ -6,5 +6,6 @@ const {
     removeProject,
 } = require('../controllers/projectControllers')
 
-router.route("/projects/add").post(protected, addProject)
-router.route("/projects/:id").delete(protected, removeProject)
+router.route("/add").post(protected, addProject)
+router.route("/:id").delete(protected, removeProject)
+                    .put(protected, updateProject)

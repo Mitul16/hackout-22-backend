@@ -24,22 +24,38 @@ exports.addProject = asyncHandler(async (req, res, next) => {
 
 
 exports.removeProject = asyncHandler(async (req, res, next) => {
-    const authuser = req.user
-    const project = await Project.findById(req.params.id).exec()
+    const authuser = req.user;
+    const project = await Project.findById(req.params.id).exec();
     if (!project) {
-        return responseCodes.response_404(res, "project does not exist")
+        return responseCodes.response_404(res, "project does not exist");
     }
     if (project.authorId != authuser._id) {
-        return responseCodes.response_400(res, "user is not project author")
+        return responseCodes.response_400(res, "user is not project author");
     }
     try {
         responseCodes.response_201(
             res,
             "success",
             await Task.deleteOne({ _id: req.params.id }).exec()
-        )
+        );
     } catch (error) {
-        next(error)
+        next(error);
     }
-})
+});
 
+exports.updateProject = asyncHandler(async (req, res, next) => {
+    const authuser = req.user;
+    try {
+        const project = await Project.findById(req.params.id).exec();
+        if (!project) {
+            return responseCodes.response_404(res, "project does not exist");
+        }
+        if (project.authorId != authuser._id) {
+            return responseCodes.response_400(res, "user is not project author");
+        }
+        const queryResponse = await Project.updateOne({ _id: req.params.id }, req.body);
+        responseCodes.response_200(res, "success", queryResponse);
+    } catch (error) {
+        next(error);
+    }
+});
