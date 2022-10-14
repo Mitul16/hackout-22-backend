@@ -3,10 +3,25 @@ const responseCodes = require("../utils/responseCodes")
 const Project = require("../models/projectModel")
 const User = require("../models/userModel")
 
-exports.addProject = async(req,res) => {
-    const user = req.user;
-    
-}
+exports.addProject = asyncHandler(async (req, res, next) => {
+  try {
+    const owner = req.user;
+    const newProject = new Project({
+      name: req.body.name,
+      description: req.body.description,
+      authorId: owner._id,
+      deadline: req.body.deadline,
+      openForMentors: req.body.openForMentors,
+      openForDevelopers: req.body.openForDevelopers,
+      developers: [owner._id],
+    });
+    const data = await newProject.save().exec();
+    return response_201(res, "Project created succesfully!", data);
+  } catch (error) {
+    return response_500(res, error);
+  }
+});
+
 
 exports.removeProject = asyncHandler(async (req, res, next) => {
     const authuser = req.user
