@@ -5,9 +5,9 @@ const ErrorResponse = require('../utils/errorResponse')
 const { sendEMail } = require('../utils/sendMail')
 
 const registerUser = asyncHandler(async (req, res, next) => {
-  const { uname, email, password } = req.body
+  const { username, email, password } = req.body
 
-  if (!uname || !email || !password) {
+  if (!username || !email || !password) {
     res
       .status(400)
       .json({ success: false, error: 'Please provide all the fields.' })
@@ -21,7 +21,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
     }
 
     const user = await User.create({
-      uname,
+      username,
       email,
       password,
     })
@@ -30,7 +30,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
         success: true,
         user: {
           _id: user._id,
-          uname: user.uname,
+          username: user.username,
           email: user.email,
         },
         token: await user.generateToken(),
@@ -50,14 +50,14 @@ const authUser = asyncHandler(async (req, res, next) => {
 
   try {
     let user = await User.findOne({ email: login }).select('+password')
-    if (!user) user = await User.findOne({ uname: login }).select('+password')
+    if (!user) user = await User.findOne({ username: login }).select('+password')
 
     if (user && (await user.matchPassword(password))) {
       res.status(200).json({
         success: true,
         user: {
           _id: user._id,
-          uname: user.uname,
+          username: user.username,
           email: user.email,
         },
         token: user.generateToken(),
