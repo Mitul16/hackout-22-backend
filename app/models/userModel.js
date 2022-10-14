@@ -21,6 +21,20 @@ const userSchema = mongoose.Schema(
         message: 'Please provide a valid email',
       },
     },
+    skills: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: 'Skill',
+    },
+    description: {
+      type: String,
+    },
+    rating:{
+      type: Number,
+      default: 0
+    },
+    github:{
+      type: String,
+    },
     password: {
       type: String,
       required: [true, 'Please provide a password'],
@@ -34,6 +48,7 @@ const userSchema = mongoose.Schema(
     timestamps: true,
   },
 )
+
 
 // will encrypt password every time it is saved
 userSchema.pre('save', async function (next) {

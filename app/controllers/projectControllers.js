@@ -16,9 +16,9 @@ exports.addProject = asyncHandler(async (req, res, next) => {
       developers: [owner._id],
     });
     const data = await newProject.save().exec();
-    return response_201(res, "Project created succesfully!", data);
+    return responseCodes.response_201(res, "Project created succesfully!", data);
   } catch (error) {
-    return response_500(res, error);
+    return responseCodes.response_500(res, error);
   }
 });
 
@@ -42,3 +42,4 @@ exports.removeProject = asyncHandler(async (req, res, next) => {
         next(error)
     }
 })
+
