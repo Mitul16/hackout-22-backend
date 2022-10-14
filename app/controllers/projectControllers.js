@@ -10,6 +10,7 @@ const {
 
 const Project = require("../models/projectModel");
 const User = require("../models/userModel");
+const Request = require("../models/requestModel");
 
 exports.addProject = asyncHandler(async (req, res, next) => {
   try {
@@ -116,3 +117,36 @@ exports.listRecommendedProjects = asyncHandler(async (req, res, next) => {
   );
   return response_200(res, "Recommended projects listed!", recommendedProjects);
 });
+
+exports.applyForProject = asyncHandler(async (req, res, next) => {
+  const user = req.user;
+  const projectId = req.params.projectId;
+  const role = req.query.role;
+
+  if (role != "mentor" && role != "developer") {
+    return response_400(res, "Invalid role!");
+  }
+
+  const project = await Project.findById(projectId);
+
+  if (project == null) {
+    return response_404(res, "Project not found!");
+  }
+
+  try {
+    const request = await Request.create({
+      creatorId: user._id,
+      projectId,
+      type: role == "mentor" ? "toMentor" : "toDevelop"
+    });
+
+    // TODO: Send mail here!
+
+    return response_200(res, "Project application request created!", request);
+  }
+  catch (error) {
+    return response_500(res, "Error while creating application request", error);
+  }
+
+  return response_400(res, "Invalid role");
+})

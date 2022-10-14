@@ -33,7 +33,7 @@ const addTask = asyncHandler(async (req, res) => {
   try {
     const task = await Task.create({
       projectId,
-      userId: user._id,
+      mentorId: user._id,
       name,
       description,
       skills,
@@ -131,18 +131,27 @@ const listProjectTasks = asyncHandler(async (req, res, next) => {
 
 const listUserTasks = asyncHandler(async (req, res, next) => {
   const userId = req.params.userId;
-  const user = await User.findById(projectId);
+  const user = await User.findById(userId);
 
   if (user == null) {
     return response_404(res, "User not found!");
   }
 
   try {
-    const userTasks = await Task.find({
-      userId,
+    const tasksCreated = await Task.find({
+      mentorId: userId,
     });
 
-    return response_200(res, "User tasks listed!", userTasks);
+    const tasksAssigned = await Task.find({
+      developerId: userId,
+    });
+
+    const tasks = {
+      tasksCreated,
+      tasksAssigned,
+    };
+
+    return response_200(res, "User tasks listed!", tasks);
   } catch (error) {
     return response_500(res, "Error while fetching user tasks", error);
   }

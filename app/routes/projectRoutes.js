@@ -9,10 +9,13 @@ const {
     listRecommendedProjects,
 } = require('../controllers/projectControllers')
 
+const { protected } = require("../middlewares/authMiddleware")
+
 router.route("/add").post(protected, addProject)
 router.route("/:id").delete(protected, removeProject)
                     .put(protected, updateProject)
-                    .get(listProject)
+                    .get(protected, listProject)
 
-router.route("/list").get(listProjects)
-router.route("/list_recommended").get(listRecommendedProjects)
+router.route("/list").get(protected, listProjects)
+router.route("/list_recommended").get(protected, listRecommendedProjects)
+router.route("/apply/:projectId").post(protected, applyForProject)

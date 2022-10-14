@@ -9,9 +9,14 @@ const taskSchema = mongoose.Schema({
     type: String,
     required: [true, "Provide description"],
   },
-  userId: {
+  mentorId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+  },
+  developerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null,
   },
   projectId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -22,10 +27,6 @@ const taskSchema = mongoose.Schema({
   },
   deadline: {
     type: Date,
-  },
-  isAssigned: {
-    type: Boolean,
-    default: false,
   },
 });
 
