@@ -24,7 +24,7 @@ exports.addProject = asyncHandler(async (req, res, next) => {
       developers: [owner._id],
     });
     const data = await newProject.save().exec();
-    return response_201(res, "Project created succesfully!", data);
+    return response_201(res, "Project created successfully!", data);
   } catch (error) {
     return response_500(res, error);
   }
@@ -33,16 +33,19 @@ exports.addProject = asyncHandler(async (req, res, next) => {
 exports.removeProject = asyncHandler(async (req, res, next) => {
   const authuser = req.user;
   const project = await Project.findById(req.params.id).exec();
+
   if (!project) {
-    return response_404(res, "project does not exist");
+    return response_404(res, "Project does not exist");
   }
+
   if (project.authorId != authuser._id) {
-    return response_400(res, "user is not project author");
+    return response_400(res, "You are not project author");
   }
+
   try {
     response_201(
       res,
-      "success",
+      "Project removed!",
       await Task.deleteOne({ _id: req.params.id }).exec()
     );
   } catch (error) {
@@ -55,16 +58,19 @@ exports.updateProject = asyncHandler(async (req, res, next) => {
   try {
     const project = await Project.findById(req.params.id).exec();
     if (!project) {
-      return response_404(res, "project does not exist");
+      return response_404(res, "Project does not exist");
     }
+
     if (project.authorId != authuser._id) {
-      return response_400(res, "user is not project author");
+      return response_400(res, "You are not project author");
     }
+
     const queryResponse = await Project.updateOne(
       { _id: req.params.id },
-      req.body
+      req.body  // FIXME: Not safe, sanitize first
     );
-    response_200(res, "success", queryResponse);
+
+    return response_200(res, "Project updated!", queryResponse);
   } catch (error) {
     next(error);
   }
@@ -102,6 +108,7 @@ exports.listRecommendedProjects = asyncHandler(async (req, res, next) => {
     return [skillsCount, project];
   });
 
+  // Select at most the top 8 projects based on the user's skills
   const sortedProjects = processedProjects.sort().reverse();
   const recommendedProjects = sortedProjects.slice(
     0,
