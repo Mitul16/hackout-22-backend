@@ -1,7 +1,10 @@
 const express = require('express')
-const { removeProject } = require('../controllers/projectControllers')
 const router = express.Router()
+const {
+    addProject,
+    updateProject,
+    removeProject,
+} = require('../controllers/projectControllers')
 
-
-router.route("/add").post(protected , addUser)
+router.route("/add").post(protected, addProject)
 router.route("/projects/:id").delete(protected, removeProject)
