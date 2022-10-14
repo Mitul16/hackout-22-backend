@@ -6,7 +6,7 @@ const EmailValidator = require('email-validator')
 
 const userSchema = mongoose.Schema(
   {
-    uname: {
+    username: {
       type: String,
       required: [true, 'Please provide a username'],
     },
