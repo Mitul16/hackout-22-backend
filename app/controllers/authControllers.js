@@ -67,7 +67,7 @@ const authUser = asyncHandler(async (req, res, next) => {
   }
 })
 
-const forgetPassword = asyncHandler(async (req, res, next) => {
+const forgotPassword = asyncHandler(async (req, res, next) => {
   const { email } = req.body
   try {
     const user = await User.findOne({ email })
@@ -128,4 +128,4 @@ const resetPassword = asyncHandler(async (req, res) => {
   }
 })
 
-module.exports = { registerUser, authUser, resetPassword, forgetPassword }
+module.exports = { registerUser, authUser, resetPassword, forgotPassword }
