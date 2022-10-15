@@ -19,8 +19,6 @@ const addTask = asyncHandler(async (req, res) => {
   const project = await Project.findById(projectId);
   const { name, description, skills, deadline } = req.body;
 
-  console.log(req.body);
-
   if (project == null) {
     return response_404(res, "Project not found!");
   }

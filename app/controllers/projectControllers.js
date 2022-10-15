@@ -95,9 +95,39 @@ exports.listProjects = asyncHandler(async (req, res, next) => {
   const skills = req.query.skills || [];
   
   try {
-    const projects = await Project.find({
-      $or: [
-        ... text && [
+    let findQuery = {};
+
+    if (text != null && text != "" && skills?.length > 0) {
+      findQuery = {
+        $and: [
+          {
+            $or: [
+              {
+                name: {
+                  $regex: text,
+                  $options: "i",
+                },
+              },
+              {
+                description: {
+                  $regex: text,
+                  $options: "i",
+                },
+              },
+            ],
+          },
+          {
+            skillsRequired: {
+              $in: skills,
+            },
+          },
+        ],
+      };
+    }
+    else
+    if (text != null && text != "") {
+      findQuery = {
+        $or: [
           {
             name: {
               $regex: text,
@@ -111,14 +141,18 @@ exports.listProjects = asyncHandler(async (req, res, next) => {
             },
           },
         ],
-        {
-          skillsRequired: {
-            $in: skills,
-          },
+      };
+    }
+    else
+    if (skills?.length > 0) {
+      findQuery = {
+        skillsRequired: {
+          $in: skills,
         },
-      ],
-    });
+      };
+    }
 
+    const projects = await Project.find(findQuery);
     return response_200(res, "Projects listed!", projects);
   } catch (error) {
     return response_500(res, "Error while listing projects", error);
