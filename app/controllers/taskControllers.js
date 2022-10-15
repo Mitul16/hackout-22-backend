@@ -160,8 +160,87 @@ const listUserTasks = asyncHandler(async (req, res, next) => {
 });
 
 const applyForTask = asyncHandler(async (req, res, next) => {
+  const user = req.user;
+  const taskId = req.params.taskId;
+
+  const task = await Task.findById(taskId);
   
+  if (task == null) {
+    return response_404(res, "Task not found!");
+  }
+
+  const project = await Project.findById(task.projectId);
+
+  if (project == null) {
+    return response_404(res, "Invalid project!");
+  }
+
+  const earlierRequest = await Request.findOne({
+    creatorId: user._id,
+    projectId: project.id,
+    taskId: taskId,
+  });
+
+  if (earlierRequest != null) {
+    return response_401(res, "You have already requested for this task.");
+  }
+
+  try {
+    const request = await Request.create({
+      creatorId: user._id,
+      projectId: project.id,
+      taskId,
+      type: "forTask",
+    });
+
+    // TODO: Send mail here!
+    sendEMail({
+      to: "adityarubbers.AV@gmail.com",
+      subject: "Someone has applied for a task on your project",
+      text: "this is a test email",
+    });
+    return response_200(res, "Task application request created!", request);
+  } catch (error) {
+    return response_500(res, "Error while creating application request", error);
+  }
 });
+
+const removeUserFromTask = asyncHandler(async (req, res, next) => {
+  const user = req.user;
+  const targetUserId = req.body.userId, taskId = req.body.taskId;
+
+  const task = await Task.findById(taskId);
+
+  if (task == null) {
+    return response_404(res, "Task not found!");
+  }
+
+  const targetUser = await User.findById(targetUserId);
+
+  if (targetUser == null) {
+    return response_404(res, "User not found!");
+  }
+
+  const project = await Project.findById(task.projectId);
+
+  if (project == null) {
+    return response_404(res, "Project not found!");
+  }
+
+  if (project.mentors.indexOf(user._id) == -1) {
+    return response_403(res, "You don't have access to remove a user from a task.");
+  }
+
+  try {
+    task.developerId = null;
+    await task.save();
+  }
+  catch (error) {
+    return response_500(res, "Error while removing user from a task", error);
+  }
+
+  return response_200(res, "User removed from the task.");
+})
 
 module.exports = {
   addTask,
@@ -170,4 +249,5 @@ module.exports = {
   listProjectTasks,
   listUserTasks,
   applyForTask,
+  removeUserFromTask,
 };
