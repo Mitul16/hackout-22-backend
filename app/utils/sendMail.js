@@ -23,17 +23,7 @@ const sendEMail = (options) => {
     } else {
       console.log(info);
     }
-<<<<<<< HEAD
-  })
-}
-    sendEMail({
-      to: "adityarubbers.AV@gmail.com",
-      subject: "Someone has applied for your projec",
-      text: "this is a test email",
-    });
-=======
   });
 };
->>>>>>> fd628c8ae96df5e84c6077bbb6fe879853812730
 
 module.exports = { sendEMail };
