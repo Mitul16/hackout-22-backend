@@ -25,7 +25,7 @@ exports.addProject = asyncHandler(async (req, res, next) => {
       openForDevelopers: req.body.openForDevelopers,
       developers: [owner._id],
     });
-    const data = await newProject.save().exec();
+    const data = await newProject.save();
     return response_201(res, "Project created successfully!", data);
   } catch (error) {
     return response_500(res, error);
@@ -40,15 +40,15 @@ exports.removeProject = asyncHandler(async (req, res, next) => {
     return response_404(res, "Project does not exist");
   }
 
-  if (project.authorId != authuser._id) {
-    return response_400(res, "You are not project author");
+  if (!project.authorId.equals(authuser._id)) {
+    return response_403(res, "You are not project author");
   }
 
   try {
     response_201(
       res,
       "Project removed!",
-      await Task.deleteOne({ _id: req.params.id }).exec()
+      await Project.deleteOne({ _id: req.params.id }).exec()
     );
   } catch (error) {
     next(error);
@@ -63,7 +63,7 @@ exports.updateProject = asyncHandler(async (req, res, next) => {
       return response_404(res, "Project does not exist");
     }
 
-    if (project.authorId != authuser._id) {
+    if (!project.authorId.equals(authuser._id)) {
       return response_400(res, "You are not project author");
     }
 
@@ -86,12 +86,17 @@ exports.listProject = asyncHandler(async (req, res, next) => {
     return response_404(res, "Project not found!");
   }
 
-  return response_200(res, "Project fetched!", project);
+  return response_200(res, "Project listed!", project);
 });
 
 exports.listProjects = asyncHandler(async (req, res, next) => {
-  const projects = await Project.find();
-  return response_200(res, "Projects listed!", projects);
+  try {
+    const projects = await Project.find();
+    return response_200(res, "Projects listed!", projects);
+  }
+  catch (error) {
+    console.log(error);
+  }
 });
 
 exports.listRecommendedProjects = asyncHandler(async (req, res, next) => {

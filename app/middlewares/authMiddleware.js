@@ -12,14 +12,14 @@ const protected = asyncHandler(async (req, res, next) => {
   ) {
     try {
       token = req.headers.authorization.split(" ")[1];
-
+      
       // decode token id
       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
       req.user = await User.findById(decoded.id).select("-password");
       next();
     } catch (err) {
       return next(
-        new ErrorResponse("Authorization failed, please login again.", 401)
+        new ErrorResponse(`Authorization failed, reason: ${err.message}`, 401)
       );
     }
   }

@@ -30,7 +30,7 @@ exports.acceptRequest = asyncHandler(async (req, res, next) => {
 
   if (request.type == "toMentor" || request.type == "toDevelop") {
     // NOTE: Only the project author can manage project requests
-    if (user._id != project.authorId) {
+    if (!project.authorId.equals(user._id)) {
       return response_403(
         res,
         "You don't have access to add a task, contact the project author."
@@ -97,7 +97,7 @@ exports.rejectRequest = asyncHandler(async (req, res, next) => {
 
   if (request.type == "toMentor" || request.type == "toDevelop") {
     // NOTE: Only the project author can manage project requests
-    if (user._id != project.authorId) {
+    if (!project.authorId.equals(user._id)) {
       return response_403(
         res,
         "You don't have access to add a task, contact the project author."

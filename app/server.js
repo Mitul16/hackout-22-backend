@@ -28,8 +28,8 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => res.send("API is Running"));
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
-app.use("/api/projects", projectRoutes);
-app.use("/api/tasks", taskRoutes);
+app.use("/api/project", projectRoutes);
+app.use("/api/task", taskRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
