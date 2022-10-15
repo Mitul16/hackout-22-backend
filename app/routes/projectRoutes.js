@@ -7,6 +7,7 @@ const {
   listProject,
   listProjects,
   listRecommendedProjects,
+  applyForProject,
 } = require("../controllers/projectControllers");
 
 const { protected } = require("../middlewares/authMiddleware");
