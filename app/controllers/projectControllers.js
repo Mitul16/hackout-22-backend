@@ -91,11 +91,37 @@ exports.listProject = asyncHandler(async (req, res, next) => {
 });
 
 exports.listProjects = asyncHandler(async (req, res, next) => {
+  const text = req.query.text || "";
+  const skills = req.query.skills || [];
+  
   try {
-    const projects = await Project.find();
+    const projects = await Project.find({
+      $or: [
+        ... text && [
+          {
+            name: {
+              $regex: text,
+              $options: "i",
+            },
+          },
+          {
+            description: {
+              $regex: text,
+              $options: "i",
+            },
+          },
+        ],
+        {
+          skillsRequired: {
+            $in: skills,
+          },
+        },
+      ],
+    });
+
     return response_200(res, "Projects listed!", projects);
   } catch (error) {
-    console.log(error);
+    return response_500(res, "Error while listing projects", error);
   }
 });
 
