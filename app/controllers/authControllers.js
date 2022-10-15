@@ -8,9 +8,8 @@ const registerUser = asyncHandler(async (req, res, next) => {
   const { username, email, password } = req.body
 
   if (!username || !email || !password) {
-    res
-      .status(400)
-      .json({ success: false, error: 'Please provide all the fields.' })
+    return res.status(400)
+              .json({ success: false, error: 'Please provide all the fields.' })
   }
 
   try {
@@ -26,7 +25,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
       password,
     })
     if (user) {
-      res.status(201).json({
+      res.status(200).json({
         success: true,
         user: {
           _id: user._id,
@@ -60,7 +59,7 @@ const authUser = asyncHandler(async (req, res, next) => {
           username: user.username,
           email: user.email,
         },
-        token: user.generateToken(),
+        token: await user.generateToken(),
       })
     } else return next(new ErrorResponse('Invalid credentials', 401))
   } catch (error) {
@@ -68,15 +67,16 @@ const authUser = asyncHandler(async (req, res, next) => {
   }
 })
 
-const forgetPassword = asyncHandler(async (req, res, next) => {
+const forgotPassword = asyncHandler(async (req, res, next) => {
   const { email } = req.body
   try {
     const user = await User.findOne({ email })
     if (!user) return next(new ErrorResponse('Email could not be sent', 404))
 
-    const resetToken = user.generateResetToken()
+    const resetToken = await user.generateResetToken()
     await user.save()
-    const resetURL = `${BASE_URL}/resetpassword/${resetToken}`
+    let LOCALHOST = `http://localhost:${process.env.PORT || "3000"}`
+    const resetURL = `${process.env.BASE_URL || LOCALHOST}/resetpassword/${resetToken}`
     const message = `
       <h1>You have requested a password reset</h1>
       <p>Please make a put request to the following link:</p>
@@ -90,7 +90,7 @@ const forgetPassword = asyncHandler(async (req, res, next) => {
       })
       res.status(200).json({
         success: true,
-        data: 'Email sent',
+        data: 'Email sent'
       })
     } catch (error) {
       user.resetPasswordToken = undefined
@@ -128,4 +128,4 @@ const resetPassword = asyncHandler(async (req, res) => {
   }
 })
 
-module.exports = { registerUser, authUser, resetPassword, forgetPassword }
+module.exports = { registerUser, authUser, resetPassword, forgotPassword }
