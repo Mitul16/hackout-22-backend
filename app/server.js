@@ -1,6 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
+const cors = require("cors");
 
 // API routers
 const authRoutes = require("./routes/authRoutes");
@@ -19,6 +20,17 @@ const app = express();
 
 // Connect to MongoDB server
 connectDB();
+
+// Add CORS policy
+var corsOptions = {
+  origin: [
+    "http://localhost:3000",
+  ],
+  credentials: true,  // Access-Control-Allow-Credentials: true
+  optionSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 
 // Add the data parsers
 app.use(express.json());
