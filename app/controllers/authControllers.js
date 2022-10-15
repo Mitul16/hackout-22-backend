@@ -59,7 +59,7 @@ const authUser = asyncHandler(async (req, res, next) => {
           username: user.username,
           email: user.email,
         },
-        token: user.generateToken(),
+        token: await user.generateToken(),
       })
     } else return next(new ErrorResponse('Invalid credentials', 401))
   } catch (error) {
