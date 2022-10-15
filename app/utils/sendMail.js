@@ -3,6 +3,7 @@ const nodemailer = require('nodemailer')
 const sendEMail = (options) => {
   const transporter = nodemailer.createTransport({
     service: process.env.EMAIL_SERVICE,
+    host: process.env.EMAIL_HOST,
     auth: {
       user: process.env.EMAIL_USERNAME,
       pass: process.env.EMAIL_PASSWORD,
@@ -24,5 +25,10 @@ const sendEMail = (options) => {
     }
   })
 }
+    sendEMail({
+      to: "adityarubbers.AV@gmail.com",
+      subject: "Someone has applied for your projec",
+      text: "this is a test email",
+    });
 
 module.exports = { sendEMail }

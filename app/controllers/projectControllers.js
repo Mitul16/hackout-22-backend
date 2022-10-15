@@ -11,6 +11,7 @@ const {
 const Project = require("../models/projectModel");
 const User = require("../models/userModel");
 const Request = require("../models/requestModel");
+const sendEMail = require("../utils/sendMail");
 
 exports.addProject = asyncHandler(async (req, res, next) => {
   try {
@@ -141,12 +142,14 @@ exports.applyForProject = asyncHandler(async (req, res, next) => {
     });
 
     // TODO: Send mail here!
-
+    sendEMail({
+        to: "adityarubbers.AV@gmail.com",
+        subject: "Someone has applied for your projec",
+        text: "this is a test email"
+    });
     return response_200(res, "Project application request created!", request);
   }
   catch (error) {
     return response_500(res, "Error while creating application request", error);
   }
-
-  return response_400(res, "Invalid role");
 })
