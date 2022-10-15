@@ -68,7 +68,7 @@ exports.updateProject = asyncHandler(async (req, res, next) => {
 
     const queryResponse = await Project.updateOne(
       { _id: req.params.id },
-      req.body  // FIXME: Not safe, sanitize first
+      req.body // FIXME: Not safe, sanitize first
     );
 
     return response_200(res, "Project updated!", queryResponse);
@@ -137,16 +137,13 @@ exports.applyForProject = asyncHandler(async (req, res, next) => {
     const request = await Request.create({
       creatorId: user._id,
       projectId,
-      type: role == "mentor" ? "toMentor" : "toDevelop"
+      type: role == "mentor" ? "toMentor" : "toDevelop",
     });
 
     // TODO: Send mail here!
 
     return response_200(res, "Project application request created!", request);
-  }
-  catch (error) {
+  } catch (error) {
     return response_500(res, "Error while creating application request", error);
   }
-
-  return response_400(res, "Invalid role");
-})
+});

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
@@ -7,11 +7,11 @@ const connectDB = async () => {
       useNewUrlParser: true,
       // useCreateIndex: true,
       // useFindAndModify: true,
-    })
-    console.log('Mongo Connected', connect.connection.host)
+    });
+    console.log("Mongo Connected", connect.connection.host);
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
-module.exports = connectDB
+module.exports = connectDB;

@@ -20,7 +20,7 @@ const requestSchema = mongoose.Schema({
   },
   expiry_date: {
     type: Date,
-    default: Date.now() + 1000 * 604800,  // 7 days
+    default: Date.now() + 1000 * 604800, // 7 days
   },
 });
 
