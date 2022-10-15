@@ -22,3 +22,5 @@ router
 router.route("/list").get(protected, listProjects);
 router.route("/list_recommended").get(protected, listRecommendedProjects);
 router.route("/apply/:projectId").post(protected, applyForProject);
+
+module.exports = router
