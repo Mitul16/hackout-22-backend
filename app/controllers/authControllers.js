@@ -26,7 +26,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
       password,
     });
     if (user) {
-      res.status(200).json({
+      res.status(201).json({
         success: true,
         user: {
           _id: user._id,
