@@ -143,16 +143,12 @@ exports.applyForProject = asyncHandler(async (req, res, next) => {
 
     // TODO: Send mail here!
     sendEMail({
-        to: "adityarubbers.AV@gmail.com",
-        subject: "Someone has applied for your projec",
-        text: "this is a test email"
+      to: "adityarubbers.AV@gmail.com",
+      subject: "Someone has applied for your projec",
+      text: "this is a test email",
     });
     return response_200(res, "Project application request created!", request);
   } catch (error) {
     return response_500(res, "Error while creating application request", error);
   }
-<<<<<<< HEAD
-})
-=======
 });
->>>>>>> fd628c8ae96df5e84c6077bbb6fe879853812730
