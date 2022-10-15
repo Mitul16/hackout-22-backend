@@ -4,7 +4,9 @@ const connectDB = require("./config/db");
 
 // API routers
 const authRoutes = require("./routes/authRoutes");
-const exampleRoutes = require("./routes/exampleRoute");
+const userRoutes = require("./routes/userRoutes");
+const projectRoutes = require("./routes/projectRoutes");
+const taskRoutes = require("./routes/taskRoutes");
 
 // API middlewares
 const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
@@ -25,7 +27,9 @@ app.use(express.urlencoded({ extended: true }));
 // Attach API routes / routers
 app.get("/", (req, res) => res.send("API is Running"));
 app.use("/api/auth", authRoutes);
-app.use("/api/example", exampleRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/api/tasks", taskRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
