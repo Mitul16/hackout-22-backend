@@ -6,12 +6,13 @@ const {
   response_403,
   response_404,
   response_500,
+  response_401,
 } = require("../utils/responseCodes");
 
 const Project = require("../models/projectModel");
 const User = require("../models/userModel");
 const Request = require("../models/requestModel");
-const sendEMail = require("../utils/sendMail");
+const { sendEMail } = require("../utils/sendMail");
 
 exports.addProject = asyncHandler(async (req, res, next) => {
   try {
@@ -93,17 +94,18 @@ exports.listProjects = asyncHandler(async (req, res, next) => {
   try {
     const projects = await Project.find();
     return response_200(res, "Projects listed!", projects);
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error);
   }
 });
 
 exports.listRecommendedProjects = asyncHandler(async (req, res, next) => {
   const user = req.user;
-  const projects = await Project.find();
+  const openProjects = await Project.find({
+    isCompleted: false,
+  });
 
-  const processedProjects = projects.forEach((project) => {
+  const processedProjects = openProjects.map((project) => {
     let skillsCount = 0;
 
     user.skills.forEach((skill) => {
@@ -121,28 +123,37 @@ exports.listRecommendedProjects = asyncHandler(async (req, res, next) => {
     0,
     Math.min(8, sortedProjects.length)
   );
+
   return response_200(res, "Recommended projects listed!", recommendedProjects);
 });
 
 exports.applyForProject = asyncHandler(async (req, res, next) => {
   const user = req.user;
-  const projectId = req.params.projectId;
-  const role = req.query.role;
+  const { role, id } = req.body;
 
   if (role != "mentor" && role != "developer") {
     return response_400(res, "Invalid role!");
   }
 
-  const project = await Project.findById(projectId);
+  const project = await Project.findById(id);
 
   if (project == null) {
     return response_404(res, "Project not found!");
   }
 
+  const earlierRequest = await Request.findOne({
+    creatorId: user._id,
+    projectId: project.id,
+  });
+
+  if (earlierRequest != null) {
+    return response_401(res, "You have already requested for this project.");
+  }
+
   try {
     const request = await Request.create({
       creatorId: user._id,
-      projectId,
+      projectId: project.id,
       type: role == "mentor" ? "toMentor" : "toDevelop",
     });
 

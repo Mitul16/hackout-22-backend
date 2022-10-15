@@ -36,6 +36,10 @@ const projectSchema = mongoose.Schema({
   features: {
     type: [mongoose.Schema.Types.ObjectId],
   },
+  isCompleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Project = mongoose.model("Project", projectSchema);

@@ -8,6 +8,7 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const taskRoutes = require("./routes/taskRoutes");
+const requestRoutes = require("./routes/requestRoutes");
 
 // API middlewares
 const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
@@ -23,10 +24,8 @@ connectDB();
 
 // Add CORS policy
 var corsOptions = {
-  origin: [
-    "http://localhost:3000",
-  ],
-  credentials: true,  // Access-Control-Allow-Credentials: true
+  origin: ["http://localhost:3000"],
+  credentials: true, // Access-Control-Allow-Credentials: true
   optionSuccessStatus: 200,
 };
 
@@ -36,12 +35,14 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Attach API routes / routers
+// Attach API handlers and routes / routers
 app.get("/", (req, res) => res.send("API is Running"));
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/project", projectRoutes);
 app.use("/api/task", taskRoutes);
+app.use("/api/request", requestRoutes);
+
 app.use(notFound);
 app.use(errorHandler);
 

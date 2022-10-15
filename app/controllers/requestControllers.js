@@ -33,7 +33,7 @@ exports.acceptRequest = asyncHandler(async (req, res, next) => {
     if (!project.authorId.equals(user._id)) {
       return response_403(
         res,
-        "You don't have access to add a task, contact the project author."
+        "You don't have access to manage project requests, contact the project author."
       );
     }
 
@@ -95,25 +95,68 @@ exports.rejectRequest = asyncHandler(async (req, res, next) => {
     return response_404(res, "Project not found!");
   }
 
-  if (request.type == "toMentor" || request.type == "toDevelop") {
-    // NOTE: Only the project author can manage project requests
-    if (!project.authorId.equals(user._id)) {
-      return response_403(
-        res,
-        "You don't have access to add a task, contact the project author."
-      );
-    }
-  } else if (request.type == "forTask") {
-    // NOTE: Only mentors of a project can manage task requests
-    if (project.mentors.indexOf(user._id) == -1) {
-      return response_403(
-        res,
-        "You don't have access to assign a task, contact the project author."
-      );
+  // Not the request creator itself
+  if (!request.creatorId.equals(user._id)) {
+    if (request.type == "toMentor" || request.type == "toDevelop") {
+      // NOTE: Only the project author can manage project requests
+      if (!project.authorId.equals(user._id)) {
+        return response_403(
+          res,
+          "You don't have access to add a task, contact the project author."
+        );
+      }
+    } else if (request.type == "forTask") {
+      // NOTE: Only mentors of a project can manage task requests
+      if (project.mentors.indexOf(user._id) == -1) {
+        return response_403(
+          res,
+          "You don't have access to assign a task, contact the project author."
+        );
+      }
     }
   }
 
   // Delete the pending request
   await Request.remove(request);
   return response_200(res, "Request rejected!");
+});
+
+exports.listRequests = asyncHandler(async (req, res, next) => {
+  const user = req.user;
+  const outgoingRequests = await Request.find({
+    creatorId: user._id,
+  });
+  
+  const projectIDs = await Project.find(
+    {
+      $or: [
+        {
+          authorId: user._id,
+        },
+        {
+          mentors: {
+            $elemMatch: {
+              $eq: user._id,
+            },
+          },
+        },
+      ],
+    },
+    {
+      _id: 1,
+    }
+  );
+
+  const incomingRequests = await Request.find({
+    projectId: {
+      $in: projectIDs,
+    },
+  });
+
+  const requests = {
+    incomingRequests,
+    outgoingRequests,
+  };
+
+  return response_200(res, "Requests listed!", requests);
 });

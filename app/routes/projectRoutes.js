@@ -15,7 +15,7 @@ const { protected } = require("../middlewares/authMiddleware");
 router.route("/add").post(protected, addProject);
 router.route("/list").get(protected, listProjects);
 router.route("/list_recommended").get(protected, listRecommendedProjects);
-router.route("/apply/:projectId").post(protected, applyForProject);
+router.route("/apply").post(protected, applyForProject);
 router
   .route("/:id")
   .delete(protected, removeProject)

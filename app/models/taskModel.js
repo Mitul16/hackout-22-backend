@@ -28,6 +28,10 @@ const taskSchema = mongoose.Schema({
   deadline: {
     type: Date,
   },
+  isCompleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Task = mongoose.model("Task", taskSchema);
