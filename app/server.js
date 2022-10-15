@@ -34,7 +34,7 @@ app.use(notFound);
 app.use(errorHandler);
 
 // Start listening for client requests
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 const server = app.listen(port, () =>
   console.log(`Sever running on port ${port}`)
 );
