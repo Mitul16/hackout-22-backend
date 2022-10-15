@@ -8,9 +8,8 @@ const registerUser = asyncHandler(async (req, res, next) => {
   const { username, email, password } = req.body
 
   if (!username || !email || !password) {
-    res
-      .status(400)
-      .json({ success: false, error: 'Please provide all the fields.' })
+    return res.status(400)
+              .json({ success: false, error: 'Please provide all the fields.' })
   }
 
   try {
@@ -26,7 +25,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
       password,
     })
     if (user) {
-      res.status(201).json({
+      res.status(200).json({
         success: true,
         user: {
           _id: user._id,
