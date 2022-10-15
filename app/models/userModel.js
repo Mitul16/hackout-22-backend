@@ -22,7 +22,8 @@ const userSchema = mongoose.Schema(
       },
     },
     skills: {
-      type: [mongoose.Schema.Types.ObjectId],
+      type: [{skill: mongoose.Schema.Types.ObjectId,
+              skillLevel: Number}],
       ref: 'Skill',
     },
     description: {
